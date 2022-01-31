@@ -1,0 +1,31 @@
+#!/bin/sh
+
+THCRAP_FOLDER=~/.local/share/thcrap
+THCRAP_CONFIG=en.js
+
+while getopts "v c:e:" flag; do
+    case "${flag}" in
+        v) USE_VPATCH=1;;
+        c) THCRAP_CONFIG=${OPTARG};;
+        e) COMMAND=${OPTARG};;
+    esac
+done
+
+if [ "$USE_VPATCH" == 1 ]; then
+    COMMAND=$(
+        echo "$COMMAND" |
+        sed -r 's/th[0-9]*.exe/vpatch.exe/'
+    )
+fi
+
+COMMAND=$(
+    echo "$COMMAND" |
+    sed -r "s@ waitforexitandrun@& $THCRAP_FOLDER/thcrap_loader.exe $THCRAP_CONFIG@"
+)
+
+echo "--------------------GENERATED COMMAND--------------------"
+echo "$COMMAND"
+echo "---------------------------------------------------------"
+
+sh -c "$COMMAND"
+
