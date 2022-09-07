@@ -1,6 +1,6 @@
 #!/bin/sh
 
-THCRAP_FOLDER=~/.local/share/thcrap
+THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=lang_en.js
 
 while getopts "v c:e:" flag; do
@@ -20,7 +20,7 @@ fi
 
 COMMAND=$(
     echo "$COMMAND" |
-    sed -r "s@ waitforexitandrun@& $THCRAP_FOLDER/thcrap_loader.exe $THCRAP_CONFIG@"
+    sed -r "s@ waitforexitandrun@& '$THCRAP_FOLDER/thcrap_loader.exe' $THCRAP_CONFIG@"
 )
 
 echo "--------------------GENERATED COMMAND--------------------"
