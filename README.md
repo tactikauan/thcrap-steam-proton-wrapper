@@ -15,10 +15,11 @@ On Linux, this isn't the case. Due to the compatibility layer used to run the ga
 So, in order to play the games with patches, and keep Steam integration, we need a workaround.
 
 ## How to use
+[Here's a video tutorial](https://www.youtube.com/watch?v=gyC_EWNWqPc) by [Maxmani](https://www.youtube.com/c/Maxmani).
 1. Set-up the regular version of [thcrap](https://www.thpatch.net/wiki/Touhou_Patch_Center:Download) (**not** the pre-packaged).
 2. Download the script, put it under `/usr/local/bin/`, and mark it as executable:
 
-       curl https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton > thcrap_proton
+       curl -O https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton
        mv thcrap_proton /usr/local/bin
        chmod +x /usr/local/bin/thcrap_proton
 
