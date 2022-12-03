@@ -30,7 +30,9 @@ So, in order to play the games with patches, and keep Steam integration, we need
 4. Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
        thcrap_proton -e "%command%"
-        
+
+   **(Make sure to include the double quotes around ```%command%```, otherwise it won't work.)**
+
    This is the base command, which will run the game with the default config specified in the script.
 
    To enable vpatch for that specific game, add the `-v` flag.
