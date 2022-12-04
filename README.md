@@ -29,9 +29,7 @@ So, in order to play the games with patches, and keep Steam integration, we need
 
 4. Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
-       thcrap_proton -e "%command%"
-
-   **(Make sure to include the double quotes around ```%command%```, otherwise it won't work.)**
+       thcrap_proton -- %command%
 
    This is the base command, which will run the game with the default config specified in the script.
 
@@ -41,7 +39,7 @@ So, in order to play the games with patches, and keep Steam integration, we need
    
    So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
        
-       thcrap_proton -e "%command%" -v -c pt-br.js
+       thcrap_proton -v -c pt-br.js -- %command%
 
    If you want to use any environment variables in your launch options, just put them at the very beginning of the line (note that when using thcrap, there's no need to set the LANG variable).
 
