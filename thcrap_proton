@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=lang_en.js
