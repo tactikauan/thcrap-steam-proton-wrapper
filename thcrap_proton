@@ -1,13 +1,30 @@
 #!/usr/bin/env bash
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
-THCRAP_CONFIG=lang_en.js
+THCRAP_CONFIG=en.js
+
+ZENITY=${STEAM_ZENITY:-$(which zenity)}
+
+echo "" > '/tmp/thcrap_proton.log'
+exec 1<&-
+exec 2<&-
+exec 1<>'/tmp/thcrap_proton.log'
+exec 2>&1
+
+launch_config() {
+    RUN=$(
+        echo "$COMMAND" |
+        sed -r "s@ waitforexitandrun.*@ waitforexitandrun '$THCRAP_FOLDER/thcrap.exe'@"
+    )
+    ${ZENITY} --info --text='The configuration tool will now launch. You can skip the "Find games" step by hitting "Cancel".'
+    sh -c "$RUN"
+}
 
 while getopts "v c:e:" flag; do
     case "${flag}" in
         v) USE_VPATCH=1;;
         c) THCRAP_CONFIG=${OPTARG};;
-        e) COMMAND=${OPTARG};;
+        e) COMMAND=${OPTARG};; # Deprecated
     esac
 done
 
@@ -19,6 +36,39 @@ if [ -z "$COMMAND" ]; then
         [[ $i =~ ( ) ]] && i=${i@Q}
         COMMAND="$COMMAND $i"
     done
+fi
+
+echo "---------------------ORIGINAL COMMAND--------------------"
+echo "$COMMAND"
+echo "---------------------------------------------------------"
+
+if [ ! -f "$THCRAP_FOLDER/thcrap.exe" ]; then
+    if ${ZENITY} --question --text="thcrap doesn't appear to be installed on \"$THCRAP_FOLDER\". Would you like this script to install it there?"; then
+        mkdir -p "$THCRAP_FOLDER"
+        if [ ! -w "$THCRAP_FOLDER" ]; then
+            ${ZENITY} --error --text="The directory \"$THCRAP_FOLDER\" could not be created or is not writable. Check your permissions and try again."
+            exit
+        fi
+        LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -L -f 'https://github.com/thpatch/thcrap/releases/latest/download/thcrap.zip' -o /tmp/thcrap.zip | ${ZENITY} --progress --pulsate --auto-close --text="Downloading thcrap.zip"
+        if [ $? != 0 ] || [ ! -f "/tmp/thcrap.zip" ]; then
+            ${ZENITY} --error --text="Download failed. Aborting"
+            exit
+        fi
+        if bsdtar -C "$THCRAP_FOLDER" -xf /tmp/thcrap.zip || unzip -d "$THCRAP_FOLDER" /tmp/thcrap.zip; then
+            launch_config
+        else
+            ${ZENITY} --error --text="Failed to extract archive. Make sure you have installed either unzip or bsdtar (libarchive). Aborting"
+            exit
+        fi
+        rm /tmp/thcrap.zip
+    fi
+fi
+
+if [ ! -f "$THCRAP_FOLDER/config/$THCRAP_CONFIG" ]; then
+    CONFIGS=$(ls -Qm "$THCRAP_FOLDER/config" || printf none)
+    if ${ZENITY} --question --text="Config file \"$THCRAP_CONFIG\" not found (found: $CONFIGS). Would you like to launch the configuration tool?"; then
+        launch_config
+    fi
 fi
 
 if [ "$USE_VPATCH" == 1 ]; then
