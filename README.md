@@ -2,56 +2,64 @@
 ## Introduction
 A wrapper script for launching the official Touhou games on Steam with the [Touhou Community Reliant Automatic Patcher](https://www.thpatch.net/) (thcrap), and optionally the [Vsync patch](https://en.touhouwiki.net/wiki/Game_Tools_and_Modifications#Vsync_Patches) (vpatch), from the Steam client using [Proton](<https://en.wikipedia.org/wiki/Proton_(software)>) on GNU/Linux.
 
-This script works by taking the command Steam would normally run to launch the game, altering it to include the patch loader, and then running it.
+This script works by setting up and managing a global thcrap instance, launching the configuration tool when needed, all without user intervention.
 
-This should allow for all the patched games to be integrated seamlessly to the Steam client on Linux.
+Before launching a game, this script takes the command Steam would normally run, and alters it to include the patch loader. This creates a seamless integration between the Steam client and thcrap, allowing the games to function as if they weren't patched at all!
 
 ### Rationale
 
 On Windows, when launching a game bought on Steam with thcrap, Steam will be able to detect and automatically wrap it, so integration will work fine.
 
-On Linux, this isn't the case. Due to the compatibility layer used to run the games, when launching them from anywhere other than the Steam client itself, Steam will be unable to detect that. This means that, while using thcrap, Steam integration won't be available, your playtime won't be tracked, and your friends won't be able to see that you are playing weird indie Japanese shmups.
+On Linux, this isn't the case. Due to the compatibility layer used to run the games, launching them from outside the Steam client will make Steam unable to detect that they are running. This means that, while using thcrap, Steam integration won't be available, your playtime won't be tracked, and your friends won't be able to see that you are playing weird indie Japanese shmups.
 
-So, in order to play the games with patches, and keep Steam integration, we need a workaround.
+Also, with Steam Play/Proton, it is expected that you can run your games without having to mess around with Wine. For Touhou, it's annoying having to fire up Wine to be able to set-up the translation patches, and then having no proper integration with Steam when trying to play the games.
 
 ## How to use
-[Here's a video tutorial](https://www.youtube.com/watch?v=gyC_EWNWqPc) by [Maxmani](https://www.youtube.com/c/Maxmani).
-1. Set-up the regular version of [thcrap](https://www.thpatch.net/wiki/Touhou_Patch_Center:Download) (**not** the pre-packaged).
-2. Download the script, put it under `/usr/local/bin/`, and mark it as executable:
+[Here's a video tutorial](https://www.youtube.com/watch?v=gyC_EWNWqPc) by [Maxmani](https://www.youtube.com/c/Maxmani) (a bit outdated, but still gives a pretty good idea).
+
+**No longer need to set-up thcrap manually**
+1. Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
 
        curl -O https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton
+       chmod +x thcrap_proton
        mv thcrap_proton /usr/local/bin
-       chmod +x /usr/local/bin/thcrap_proton
 
-3. Edit the script:
-- Change `THCRAP_FOLDER` to where is located your thcrap installation.
-- Optionally, change the default config loaded by thcrap in `THCRAP_CONFIG`. This can be set individually for each game, as we'll see next.
+2. (Optional) Edit the script:
+- The `THCRAP_FOLDER` variable points to where the thcrap installation will be located. You can to change it, for example, if you want it to point to your current thcrap installation, or somewhere else that you find convenient.
+- The `THCRAP_CONFIG` defines the config file that will be loaded when no other is specified in the launch options.
 
-4. Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
+3. Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
        thcrap_proton -- %command%
-
-   This is the base command, which will run the game with the default config specified in the script.
-
-   To enable vpatch for that specific game, add the `-v` flag.
-
-   To override the config loaded by thcrap for that specific game, use the `-c` flag.
    
+   In case you have put your script outside `/usr/local/bin/`, you'll have to provide the full path:
+   
+       /path/to/thcrap_proton -- %command%
+
+   This is the base command, which will run the game with the default config.
+
+   To change the config file loaded by thcrap, use the `-c` flag.
+   
+   To enable vpatch for that game, include the `-v` flag.
+   
+   **Note that this script does not install vpatch on it's own.**
+
    So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
        
        thcrap_proton -v -c pt-br.js -- %command%
 
-   If you want to use any environment variables in your launch options, just put them at the very beginning of the line (note that when using thcrap, there's no need to set the LANG variable).
+   **Note: the `%command%` always comes at the end**
 
-5. Run the game, and when the thcrap loader window shows up, click on 'Settings and logs' and uncheck 'Keep the updater running in background', so Steam can correctly detect when the game is closed.
+   If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
+   
+       thcrap_proton -- PROTON_USE_WINED3D=1 %command%
+
+4. Run the game. Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files (you can skip the "Find games" step).
+
+5. When the thcrap loader window shows up, click on 'Settings and logs' and uncheck 'Keep the updater running in background', so Steam can correctly detect when the game is closed.
 
    And thats it!
 
 ## Advanced
 ### Debugging
-To have a look at the command generated by this script, run Steam through the command line.
-
-To get a copy of the original startup command run by Steam, change the launch options to something like this:
-
-    echo "%command%" > /tmp/command.txt
-
+The script sends all it's output to `/tmp/thcrap_proton.log`, which includes the original and modified launch commands.
