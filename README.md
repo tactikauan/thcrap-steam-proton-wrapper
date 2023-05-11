@@ -54,7 +54,7 @@ Also, with Steam Play/Proton, it is expected that you can run your games without
    
        thcrap_proton -- PROTON_USE_WINED3D=1 %command%
 
-4. Run the game. Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files (you can skip the "Find games" step).
+4. Run the game. Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files.
 
 5. When the thcrap loader window shows up, click on 'Settings and logs' and uncheck 'Keep the updater running in background', so Steam can correctly detect when the game is closed.
 

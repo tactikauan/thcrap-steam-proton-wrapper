@@ -14,7 +14,7 @@ exec 2>&1
 launch_config() {
     RUN=$(
         echo "$COMMAND" |
-        sed -r "s@ waitforexitandrun.*@ waitforexitandrun '$THCRAP_FOLDER/thcrap.exe'@"
+        sed -r "s@ waitforexitandrun.*@ waitforexitandrun '$THCRAP_FOLDER/thcrap.exe' --skip-search-games@"
     )
     ${ZENITY} --info --text='The configuration tool will now launch. You can skip the "Find games" step by hitting "Cancel".'
     sh -c "$RUN"
