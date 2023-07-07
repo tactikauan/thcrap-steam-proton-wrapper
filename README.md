@@ -18,47 +18,57 @@ Also, with Steam Play/Proton, it is expected that you can run your games without
 [Here's a video tutorial](https://www.youtube.com/watch?v=gyC_EWNWqPc) by [Maxmani](https://www.youtube.com/c/Maxmani) (a bit outdated, but still gives a pretty good idea).
 
 **No longer need to set-up thcrap manually**
-1. Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
+### 1. Installation
+#### For Steam Flatpak
+
+       flatpak install flathub com.valvesoftware.Steam.Utility.thcrap_steam_proton_wrapper
+
+#### Manual installation
+
+Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
 
        curl -O https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton
        chmod +x thcrap_proton
        mv thcrap_proton /usr/local/bin
 
-2. (Optional) Edit the script:
-- The `THCRAP_FOLDER` variable points to where the thcrap installation will be located. You can to change it, for example, if you want it to point to your current thcrap installation, or somewhere else that you find convenient.
+### 2. Editing the script (optional)
+If you have gone through the manual installation, you have the opportunity to change the following variables inside the script:
+- The `THCRAP_FOLDER` variable points to where the thcrap installation will be located. You can to change it, for example, if you want it to point to your current thcrap installation.
 - The `THCRAP_CONFIG` defines the config file that will be loaded when no other is specified in the launch options.
 
-3. Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
+### 3. Setting the launch options
+Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
        thcrap_proton -- %command%
    
-   In case you have put your script outside `/usr/local/bin/`, you'll have to provide the full path:
+In case you have put your script outside `/usr/local/bin/`, you'll have to provide the full path:
    
        /path/to/thcrap_proton -- %command%
 
-   This is the base command, which will run the game with the default config.
+This is the base command, which will run the game with the default config.
 
-   To change the config file loaded by thcrap, use the `-c` flag.
-   
-   To enable vpatch for that game, include the `-v` flag.
-   
-   **Note that this script does not install vpatch on it's own.**
+To change the config file loaded by thcrap, use the `-c` flag.
 
-   So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
+To enable vpatch for that game, include the `-v` flag.
+   
+**Note that this script does not install vpatch on it's own.**
+
+So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
        
        thcrap_proton -v -c pt-br.js -- %command%
 
-   **Note: the `%command%` always comes at the end**
+**Note: the `%command%` always comes at the end**
 
-   If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
+If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
    
        thcrap_proton -- PROTON_USE_WINED3D=1 %command%
 
-4. Run the game. Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files.
+### 4. Running the game
+Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files.
 
-5. When the thcrap loader window shows up, click on 'Settings and logs' and uncheck 'Keep the updater running in background', so Steam can correctly detect when the game is closed.
+After that, when the thcrap loader window shows up, click on 'Settings and logs' and uncheck 'Keep the updater running in background', so Steam can correctly detect when the game is closed.
 
-   And thats it!
+And thats it!
 
 ## Advanced
 ### Debugging
