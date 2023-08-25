@@ -86,5 +86,23 @@ echo "--------------------GENERATED COMMAND--------------------"
 echo "$COMMAND"
 echo "---------------------------------------------------------"
 
-sh -c "$COMMAND"
+sh -c "$COMMAND" &
 
+# Give the main executable time to launch
+sleep 10
+
+# Get PID while ensuring only the actual Touhou executable is chosen
+TH_PID=$(pgrep -fn "$th[0-19].exe")
+
+cleanup() {
+    # Find and kill the thcrap_loader process
+    pkill -f "thcrap_loader.exe"
+}
+
+# Set up the trap to call the cleanup function when the script exits
+trap cleanup EXIT
+
+# Check if Touhou is still running
+while kill -0 $TH_PID 2>/dev/null; do
+    sleep 5
+done
