@@ -2,6 +2,7 @@
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=en.js
+WAIT_TIME=10 # Increase this if the game takes a while to load and thcrap_loader still hangs
 
 ZENITY=${STEAM_ZENITY:-$(which zenity)}
 
@@ -89,7 +90,7 @@ echo "---------------------------------------------------------"
 sh -c "$COMMAND" &
 
 # Give the main executable time to launch
-sleep 10
+sleep $WAIT_TIME
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 TH_PID=$(pgrep -fn "$th[0-19].exe")
