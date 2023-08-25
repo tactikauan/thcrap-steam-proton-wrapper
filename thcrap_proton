@@ -2,7 +2,6 @@
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=en.js
-WAIT_TIME=10 # Increase this if the game takes a while to load and thcrap_loader still hangs
 
 ZENITY=${STEAM_ZENITY:-$(which zenity)}
 
@@ -92,18 +91,13 @@ sh -c "$COMMAND" &
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
     TH_PID=$(pgrep -a "$th[0-9]+\.exe" | \grep -i "$th[0-9].exe" | awk '{print $1}')
-    sleep $WAIT_TIME
+    sleep 5
 done
-
-cleanup() {
-    # Find and kill the thcrap_loader process
-    pkill -f "thcrap_loader.exe"
-}
-
-# Set up the trap to call the cleanup function when the script exits
-trap cleanup EXIT
 
 # Check if Touhou is still running
 while kill -0 $TH_PID 2>/dev/null; do
     sleep 5
 done
+
+# Find and kill the thcrap_loader process
+pkill -f "thcrap_loader.exe"
