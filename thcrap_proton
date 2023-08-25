@@ -89,11 +89,11 @@ echo "---------------------------------------------------------"
 
 sh -c "$COMMAND" &
 
-# Give the main executable time to launch
-sleep $WAIT_TIME
-
 # Get PID while ensuring only the actual Touhou executable is chosen
-TH_PID=$(pgrep -fn "$th[0-9]+\.exe")
+while [ -z "$TH_PID" ]; do # Loop until a matching process is found
+    TH_PID=$(pgrep -a "$th[0-9]+\.exe" | \grep -i "$th[0-9].exe" | awk '{print $1}')
+    sleep $WAIT_TIME
+done
 
 cleanup() {
     # Find and kill the thcrap_loader process
