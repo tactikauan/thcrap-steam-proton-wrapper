@@ -70,10 +70,12 @@ if [ ! -f "$THCRAP_FOLDER/config/$THCRAP_CONFIG" ]; then
     fi
 fi
 
+TH_REGEX="th[0-9]+\.exe"
+
 if [ "$USE_VPATCH" == 1 ]; then
     COMMAND=$(
         echo "$COMMAND" |
-        sed -r 's/th[0-9]*.exe/vpatch.exe/'
+        sed -r "s/$TH_REGEX/vpatch.exe/"
     )
 fi
 
@@ -90,7 +92,7 @@ sh -c "$COMMAND" &
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(pgrep -a "th[0-9]+\.exe" | grep -iE "th[0-9]+\.exe" | awk '{print $1}')
+    TH_PID=$(pgrep -a "$TH_REGEX" | grep -iE "$TH_REGEX" | awk '{print $1}')
     sleep 5
 done
 
