@@ -90,12 +90,12 @@ sh -c "$COMMAND" &
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(pgrep -a "$th[0-9]+\.exe" | \grep -i "$th[0-9].exe" | awk '{print $1}')
+    TH_PID=$(pgrep -a "th[0-9]+\.exe" | grep -iE "th[0-9]+\.exe" | awk '{print $1}')
     sleep 5
 done
 
 # Check if Touhou is still running
-while kill -0 $TH_PID 2>/dev/null; do
+while ps -p $TH_PID > /dev/null; do
     sleep 5
 done
 
