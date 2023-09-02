@@ -70,10 +70,12 @@ if [ ! -f "$THCRAP_FOLDER/config/$THCRAP_CONFIG" ]; then
     fi
 fi
 
+TH_REGEX="th[0-9]+\.exe"
+
 if [ "$USE_VPATCH" == 1 ]; then
     COMMAND=$(
         echo "$COMMAND" |
-        sed -r 's/th[0-9]*.exe/vpatch.exe/'
+        sed -r "s/$TH_REGEX/vpatch.exe/"
     )
 fi
 
@@ -86,5 +88,18 @@ echo "--------------------GENERATED COMMAND--------------------"
 echo "$COMMAND"
 echo "---------------------------------------------------------"
 
-sh -c "$COMMAND"
+sh -c "$COMMAND" &
 
+# Get PID while ensuring only the actual Touhou executable is chosen
+while [ -z "$TH_PID" ]; do # Loop until a matching process is found
+    TH_PID=$(pgrep "$TH_REGEX")
+    sleep 5
+done
+
+# Check if Touhou is still running
+while ps -p $TH_PID > /dev/null; do
+    sleep 5
+done
+
+# Find and kill the thcrap_loader process
+pkill -f "thcrap_loader.exe"
