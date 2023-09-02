@@ -92,7 +92,7 @@ sh -c "$COMMAND" &
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(pgrep -a "$TH_REGEX" | grep -iE "$TH_REGEX" | awk '{print $1}')
+    TH_PID=$(pgrep "$TH_REGEX")
     sleep 5
 done
 
