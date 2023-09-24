@@ -15,21 +15,24 @@ On Linux, this isn't the case. Due to the compatibility layer used to run the ga
 Also, with Steam Play/Proton, it is expected that you can run your games without having to mess around with Wine. For Touhou, it's annoying having to fire up Wine to be able to set-up the translation patches, and then having no proper integration with Steam when trying to play the games.
 
 ## How to use
-[Here's a video tutorial](https://www.youtube.com/watch?v=gyC_EWNWqPc) by [Maxmani](https://www.youtube.com/c/Maxmani) (a bit outdated, but still gives a pretty good idea).
+[Here's a video tutorial](https://www.youtube.com/watch?v=6rZxeyILYmo) by [Maxmani](https://www.youtube.com/c/Maxmani).
 
-**No longer need to set-up thcrap manually**
 ### 1. Installation
+#### AUR
+
+    yay -S thcrap-steam-proton-wrapper-git
+
 #### For Steam Flatpak
 
-       flatpak install flathub com.valvesoftware.Steam.Utility.thcrap_steam_proton_wrapper
+    flatpak install flathub com.valvesoftware.Steam.Utility.thcrap_steam_proton_wrapper
 
 #### Manual installation
 
 Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
 
-       curl -O https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton
-       chmod +x thcrap_proton
-       mv thcrap_proton /usr/local/bin
+    curl -O https://raw.githubusercontent.com/tactikauan/thcrap-steam-proton-wrapper/master/thcrap_proton
+    chmod +x thcrap_proton
+    mv thcrap_proton /usr/local/bin
 
 ### 2. Editing the script (optional)
 If you have gone through the manual installation, you have the opportunity to change the following variables inside the script:
@@ -39,11 +42,11 @@ If you have gone through the manual installation, you have the opportunity to ch
 ### 3. Setting the launch options
 Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
-       thcrap_proton -- %command%
+    thcrap_proton -- %command%
    
 In case you have put your script outside `/usr/local/bin/`, you'll have to provide the full path:
    
-       /path/to/thcrap_proton -- %command%
+    /path/to/thcrap_proton -- %command%
 
 This is the base command, which will run the game with the default config.
 
@@ -55,13 +58,13 @@ To enable vpatch for that game, include the `-v` flag.
 
 So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
        
-       thcrap_proton -v -c pt-br.js -- %command%
+    thcrap_proton -v -c pt-br.js -- %command%
 
 **Note: the `%command%` always comes at the end**
 
 If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
    
-       thcrap_proton -- PROTON_USE_WINED3D=1 %command%
+    thcrap_proton -- PROTON_USE_WINED3D=1 %command%
 
 ### 4. Running the game
 Upon first launch, the script will download and set-up a thcrap instance, if there's not one already, and then launch the configuration tool, so you can generate your config files.
