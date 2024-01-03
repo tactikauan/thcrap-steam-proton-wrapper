@@ -37,6 +37,9 @@ if [ -z "$COMMAND" ]; then
     done
 fi
 
+# Format byte-encoded characters back to text
+COMMAND=$(printf "$COMMAND")
+
 echo "---------------------ORIGINAL COMMAND--------------------"
 echo "$COMMAND"
 echo "---------------------------------------------------------"
@@ -92,7 +95,7 @@ sh -c "$COMMAND" &
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(pgrep "$TH_REGEX")
+    TH_PID=$(grep -Er "$TH_REGEX" /proc/*/stat | sed "s/.*:\([0-9]\+\).*/\\1/")
     sleep 5
 done
 
