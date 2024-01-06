@@ -3,7 +3,7 @@
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=en.js
 
-ZENITY=${STEAM_ZENITY:-$(which zenity)}
+ZENITY=$(which zenity)
 
 echo "" > '/tmp/thcrap_proton.log'
 exec &>>'/tmp/thcrap_proton.log'
