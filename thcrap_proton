@@ -6,9 +6,7 @@ THCRAP_CONFIG=en.js
 ZENITY=${STEAM_ZENITY:-$(which zenity)}
 
 echo "" > '/tmp/thcrap_proton.log'
-exec 1<&-
-exec 2<&-
-exec 1<>'/tmp/thcrap_proton.log'
+exec &>>'/tmp/thcrap_proton.log'
 exec 2>&1
 
 launch_config() {
