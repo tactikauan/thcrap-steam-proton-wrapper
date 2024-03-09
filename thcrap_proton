@@ -17,9 +17,10 @@ launch_config() {
     sh -c "$RUN"
 }
 
-while getopts "v c:e:" flag; do
+while getopts "v c:p:e:" flag; do
     case "${flag}" in
         v) USE_VPATCH=1;;
+        p) THPRAC_EXE=${OPTARG};;
         c) THCRAP_CONFIG=${OPTARG};;
         e) COMMAND=${OPTARG};; # Deprecated
     esac
@@ -90,6 +91,17 @@ echo "$COMMAND"
 echo "---------------------------------------------------------"
 
 sh -c "$COMMAND" &
+
+if [ -n "$THPRAC_EXE" ]; then
+    # wait 5s and launch thprac so it could auto attach to the game
+    sleep 5
+    PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
+    RUN_THPRAC="$PROTON_CMD run '$THPRAC_EXE'"
+    echo "-----------------------THPRAC COMMAND--------------------"
+    echo "$RUN_THPRAC"
+    echo "---------------------------------------------------------"
+    sh -c "$RUN_THPRAC" &
+fi
 
 # Get PID while ensuring only the actual Touhou executable is chosen
 while [ -z "$TH_PID" ]; do # Loop until a matching process is found
