@@ -1,6 +1,6 @@
 # thcrap-steam-proton-wrapper
 ## Introduction
-A wrapper script for launching the official Touhou games on Steam with the [Touhou Community Reliant Automatic Patcher](https://www.thpatch.net/) (thcrap), and optionally the [Vsync patch](https://en.touhouwiki.net/wiki/Game_Tools_and_Modifications#Vsync_Patches) (vpatch), from the Steam client using [Proton](<https://en.wikipedia.org/wiki/Proton_(software)>) on GNU/Linux.
+A wrapper script for launching the official Touhou games on Steam with the [Touhou Community Reliant Automatic Patcher](https://www.thpatch.net/) (thcrap), and optionally the [Vsync patch](https://en.touhouwiki.net/wiki/Game_Tools_and_Modifications#Vsync_Patches) (vpatch) and [thprac](https://github.com/touhouworldcup/thprac), from the Steam client using [Proton](<https://en.wikipedia.org/wiki/Proton_(software)>) on GNU/Linux.
 
 This script works by setting up and managing a global thcrap instance, launching the configuration tool when needed, all without user intervention.
 
@@ -43,27 +43,49 @@ If you have gone through the manual installation, you have the opportunity to ch
 Go to your Steam library -> right click the game -> Properties -> and edit the launch options to:
 
     thcrap_proton -- %command%
-   
+
 In case you have put your script outside `/usr/local/bin/`, you'll have to provide the full path:
-   
+
     /path/to/thcrap_proton -- %command%
 
 This is the base command, which will run the game with the default config.
 
-To change the config file loaded by thcrap, use the `-c` flag.
+#### thcrap config file
+The default config is `THCRAP_CONFIG`, set to `en.js` if unmodified in the script.
+To change the config file loaded by thcrap, use the `-c` flag, like this:
 
-To enable vpatch for that game, include the `-v` flag.
-   
-**Note that this script does not install vpatch on it's own.**
+    thcrap_proton -c pt-br.js -- %command%
 
-So, if I wanted to run the game with vpatch and Brazilian Portuguese translations, the command would look like this:
-       
-    thcrap_proton -v -c pt-br.js -- %command%
+would run the game with Brazilian Portuguese translations.
+
+After installation, you can find all installed configs at `$THCRAP_FOLDER/config`.
 
 **Note: the `%command%` always comes at the end**
 
+#### vpatch (optional)
+To enable vpatch for that game, include the `-v` flag, like this:
+
+    thcrap_proton -v -- %command%
+
+**Note that this script does not install vpatch on it's own.**
+
+#### thprac (optional)
+To enable thprac for that game, use the `-p` flag, like this:
+
+    thcrap_proton -p -- %command%
+
+The script will download and install thprac to `THPRAC_FOLDER`.
+Default location is `/home/$USER/.local/share/thprac`.
+
+Upon launching thprac will ask whether to apply to the ongoing game, if running game
+in full screen mode you may need to minimize the game to see the dialog box.
+To [change thprac language](https://github.com/touhouworldcup/thprac?tab=readme-ov-file#how-do-i-switch-language),
+don't attach thprac to ongoing game when prompted and it will start a launcher.
+Then change language in thprac setting.
+
+#### Extra environment variables (optional)
 If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
-   
+
     thcrap_proton -- PROTON_USE_WINED3D=1 %command%
 
 ### 4. Running the game
