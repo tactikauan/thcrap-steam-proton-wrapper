@@ -56,7 +56,9 @@ To enable vpatch for that game, include the `-v` flag.
 
 **Note that this script does not install vpatch on it's own.**
 
-To enable thprac for that game, include the `-p` flag.
+To enable thprac for that game, use the `-p` flag to specify thprac executable.
+Upon launching thprac will ask whether to apply to the ongoing game, if running game
+in full screen mode you may need to minimize the game to see the dialog box.
 To [change thprac language](https://github.com/touhouworldcup/thprac?tab=readme-ov-file#how-do-i-switch-language),
 first temporarily change the launch option to _Launch Controller Layout Tool_.
 The drop down menu is located above where you change launch command.
