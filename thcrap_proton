@@ -95,7 +95,7 @@ sh -c "$COMMAND" &
 if [ -n "$THPRAC_EXE" ]; then
     # wait 5s and launch thprac so it could auto attach to the game
     sleep 5
-    PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \('.*proton'\).*$/\\1/p" )
+    PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
     RUN_THPRAC="WINEPREFIX='$STEAM_COMPAT_DATA_PATH/pfx/' $PROTON_CMD run '$THPRAC_EXE'"
     echo "-----------------------THPRAC COMMAND--------------------"
     echo "$RUN_THPRAC"
