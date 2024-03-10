@@ -2,6 +2,7 @@
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=en.js
+THPRAC_FOLDER="/home/$USER/.local/share/thprac"
 
 ZENITY=$(which zenity)
 
@@ -17,10 +18,10 @@ launch_config() {
     sh -c "$RUN"
 }
 
-while getopts "v c:p:e:" flag; do
+while getopts "vp c:e:" flag; do
     case "${flag}" in
         v) USE_VPATCH=1;;
-        p) THPRAC_EXE=${OPTARG};;
+        p) USE_THPRAC=1;;
         c) THCRAP_CONFIG=${OPTARG};;
         e) COMMAND=${OPTARG};; # Deprecated
     esac
@@ -72,6 +73,28 @@ if [ ! -f "$THCRAP_FOLDER/config/$THCRAP_CONFIG" ]; then
     fi
 fi
 
+if [ "$USE_THPRAC" == 1 ]; then
+    THPRAC_VERSION=$(LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -si https://github.com/touhouworldcup/thprac/releases/latest | grep location: | sed 's@.*/@@' | tr -d '[:space:]')
+    if [ ! -f "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" ]; then
+        if ${ZENITY} --question --text="\"thprac.$THPRAC_VERSION.exe\" doesn't appear to be installed on \"$THPRAC_FOLDER\". Would you like this script to install it there?"; then
+            mkdir -p "$THPRAC_FOLDER"
+            if [ ! -w "$THPRAC_FOLDER" ]; then
+                ${ZENITY} --error --text="The directory \"$THPRAC_FOLDER\" could not be created or is not writable. Check your permissions and try again."
+                exit
+            fi
+            LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -L -f "https://github.com/touhouworldcup/thprac/releases/download/$THPRAC_VERSION/thprac.$THPRAC_VERSION.exe" -o "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" | ${ZENITY} --progress --pulsate --auto-close --text="Downloading \"thprac.$THPRAC_VERSION.exe\""
+            if [ $? != 0 ] || [ ! -f "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" ]; then
+                ${ZENITY} --error --text="Download failed. Aborting"
+                exit
+            fi
+            # Create a symlink to latest version
+            ln -srf "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" "$THPRAC_FOLDER/thprac.exe"
+        else
+            USE_THPRAC=0
+        fi
+    fi
+fi
+
 TH_REGEX="(th[0-9]+|東方紅魔郷)"
 
 if [ "$USE_VPATCH" == 1 ]; then
@@ -92,11 +115,11 @@ echo "---------------------------------------------------------"
 
 sh -c "$COMMAND" &
 
-if [ -n "$THPRAC_EXE" ]; then
+if [ "$USE_THPRAC" == 1 ]; then
     # wait 5s and launch thprac so it could auto attach to the game
     sleep 5
     PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
-    RUN_THPRAC="WINEPREFIX='$STEAM_COMPAT_DATA_PATH/pfx/' $PROTON_CMD run '$THPRAC_EXE'"
+    RUN_THPRAC="$PROTON_CMD run '$THPRAC_FOLDER/thprac.exe'"
     echo "-----------------------THPRAC COMMAND--------------------"
     echo "$RUN_THPRAC"
     echo "---------------------------------------------------------"
