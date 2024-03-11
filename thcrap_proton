@@ -74,24 +74,30 @@ if [ ! -f "$THCRAP_FOLDER/config/$THCRAP_CONFIG" ]; then
 fi
 
 if [ "$USE_THPRAC" == 1 ]; then
-    THPRAC_VERSION=$(LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -si https://github.com/touhouworldcup/thprac/releases/latest | grep location: | sed 's@.*/@@' | tr -d '[:space:]')
-    if [ ! -f "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" ]; then
-        if ${ZENITY} --question --text="\"thprac.$THPRAC_VERSION.exe\" doesn't appear to be installed on \"$THPRAC_FOLDER\". Would you like this script to install it there?"; then
-            mkdir -p "$THPRAC_FOLDER"
-            if [ ! -w "$THPRAC_FOLDER" ]; then
-                ${ZENITY} --error --text="The directory \"$THPRAC_FOLDER\" could not be created or is not writable. Check your permissions and try again."
-                exit
-            fi
-            LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -L -f "https://github.com/touhouworldcup/thprac/releases/download/$THPRAC_VERSION/thprac.$THPRAC_VERSION.exe" -o "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" | ${ZENITY} --progress --pulsate --auto-close --text="Downloading \"thprac.$THPRAC_VERSION.exe\""
-            if [ $? != 0 ] || [ ! -f "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" ]; then
+    THPRAC_VERSION=$(LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl --connect-timeout 5 -si https://github.com/touhouworldcup/thprac/releases/latest | grep location: | sed 's@.*/@@' | tr -d '[:space:]')
+    if [[ -n "$THPRAC_VERSION" && ! -f "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" ]]; then
+        # Install latest version
+        mkdir -p "$THPRAC_FOLDER"
+        if [ ! -w "$THPRAC_FOLDER" ]; then
+            ${ZENITY} --error --text="The directory \"$THPRAC_FOLDER\" could not be created or is not writable. Check your permissions and try again."
+            exit
+        fi
+        LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -L -f "https://github.com/touhouworldcup/thprac/releases/download/$THPRAC_VERSION/thprac.$THPRAC_VERSION.exe" -o "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" | ${ZENITY} --progress --pulsate --auto-close --text="Downloading \"thprac.$THPRAC_VERSION.exe\""
+        if [ $? != 0 ]; then
+            # Only abort if there's no version currently installed
+            if [ ! -f "$THPRAC_FOLDER/thprac.exe" ]; then
                 ${ZENITY} --error --text="Download failed. Aborting"
                 exit
             fi
-            # Create a symlink to latest version
-            ln -srf "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" "$THPRAC_FOLDER/thprac.exe"
         else
-            USE_THPRAC=0
+            # Create a symlink to latest version
+            # You can manually change launch version by pointing the symlink to old version.
+            ln -srf "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" "$THPRAC_FOLDER/thprac.exe"
         fi
+    elif [[ -z "$THPRAC_VERSION" && ! -f "$THPRAC_FOLDER/thprac.exe" ]]; then
+        # no connection and no installed version
+        ${ZENITY} --error --text="Download failed. Aborting"
+        exit
     fi
 fi
 
