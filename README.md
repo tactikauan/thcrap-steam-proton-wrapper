@@ -26,6 +26,10 @@ Also, with Steam Play/Proton, it is expected that you can run your games without
 
     flatpak install flathub com.valvesoftware.Steam.Utility.thcrap_steam_proton_wrapper
 
+**Note: For flatpak version of Steam, by default `/home/$USER` or `$HOME` directory is mapped to `/home/$USER/.var/app/com.valvesoftware.Steam`.
+A dialog box will ask whether to install thcrap to `/home/$USER/.local/share/thcrap`,
+but the real location is `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thcrap`**
+
 #### Manual installation
 
 Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
@@ -50,29 +54,41 @@ In case you have put your script outside `/usr/local/bin/`, you'll have to provi
 
 This is the base command, which will run the game with the default config.
 
-To change the config file loaded by thcrap, use the `-c` flag.
+#### thcrap config file
+The default config is `THCRAP_CONFIG`, set to `en.js` if unmodified in the script.
+To change the config file loaded by thcrap, use the `-c` flag, like this:
 
-To enable vpatch for that game, include the `-v` flag.
+    thcrap_proton -c pt-br.js -- %command%
 
-**Note that this script does not install vpatch on it's own.**
+would run the game with Brazilian Portuguese translations.
 
-To enable thprac for that game, use the `-p` flag to specify thprac executable.
-Upon launching thprac will ask whether to apply to the ongoing game, if running game
-in full screen mode you may need to minimize the game to see the dialog box.
-To [change thprac language](https://github.com/touhouworldcup/thprac?tab=readme-ov-file#how-do-i-switch-language),
-first temporarily change the launch option to _Launch Controller Layout Tool_.
-The drop down menu is located above where you change launch command.
-This will start the thprac launcher, and you can change lauguage under settings.
-Or you can set `LANG` environment variable to `en_US.utf8` for example.
-See below how to set environment variables.
-The launcher setting will take precedence over environment variable.
-
-So, if I wanted to run the game with vpatch and thprac and Brazilian Portuguese translations, the command would look like this:
-
-    thcrap_proton -v -c pt-br.js -p /path/to/thprac.vx.x.x.x.exe -- %command%
+After installation, you can find all installed configs at `$THCRAP_FOLDER/config`.
 
 **Note: the `%command%` always comes at the end**
 
+#### vpatch (optional)
+To enable vpatch for that game, include the `-v` flag, like this:
+
+    thcrap_proton -v -- %command%
+
+**Note that this script does not install vpatch on it's own.**
+
+#### thprac (optional)
+To enable thprac for that game, use the `-p` flag, like this:
+
+    thcrap_proton -p -- %command%
+
+The script will download and install thprac to `THPRAC_FOLDER`.
+Default location is `/home/$USER/.local/share/thprac`.
+**Note: For flatpak version of Steam, the default location mapped to `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thprac`**
+
+Upon launching thprac will ask whether to apply to the ongoing game, if running game
+in full screen mode you may need to minimize the game to see the dialog box.
+To [change thprac language](https://github.com/touhouworldcup/thprac?tab=readme-ov-file#how-do-i-switch-language),
+don't attach thprac to ongoing game when prompted and it will start a launcher.
+Then change language in thprac setting.
+
+#### Extra environment variables (optional)
 If you want to use any environment variables in your launch options, you can put them before the `%command%`, like this:
 
     thcrap_proton -- PROTON_USE_WINED3D=1 %command%
