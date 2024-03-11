@@ -90,6 +90,12 @@ if [ "$USE_THPRAC" == 1 ]; then
                 exit
             fi
         else
+            # Remove old versions, only keep 5 latest versions
+            readarray -d '' THPRAC_OLD_VERSIONS < <(find "$THPRAC_FOLDER" -maxdepth 1 -regextype egrep -iregex '.*/thprac.v([0-9]|\.)*.exe' -print0 | sort -zVr | tail -z -n +6)
+            if (( ${#THPRAC_OLD_VERSIONS[@]} )); then
+                # THPRAC_OLD_VERSIONS not empty
+                rm "${THPRAC_OLD_VERSIONS[@]}"
+            fi
             # Create a symlink to latest version
             # You can manually change launch version by pointing the symlink to old version.
             ln -srf "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" "$THPRAC_FOLDER/thprac.exe"
