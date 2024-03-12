@@ -2,6 +2,8 @@
 
 THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
 THCRAP_CONFIG=en.js
+
+# This is `thprac` not `thcrap`
 THPRAC_FOLDER="/home/$USER/.local/share/thprac"
 
 ZENITY=$(which zenity)
