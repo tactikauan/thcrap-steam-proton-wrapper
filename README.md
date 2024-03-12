@@ -80,7 +80,8 @@ To enable thprac for that game, use the `-p` flag, like this:
 
 The script will download and install thprac to `THPRAC_FOLDER`.
 Default location is `/home/$USER/.local/share/thprac`.
-**Note: For flatpak version of Steam, the default location mapped to `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thprac`**
+
+**Note: For flatpak version of Steam, the default location is mapped to `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thprac`**
 
 Upon launching thprac will ask whether to apply to the ongoing game, if running game
 in full screen mode you may need to minimize the game to see the dialog box.
