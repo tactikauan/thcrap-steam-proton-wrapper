@@ -26,10 +26,6 @@ Also, with Steam Play/Proton, it is expected that you can run your games without
 
     flatpak install flathub com.valvesoftware.Steam.Utility.thcrap_steam_proton_wrapper
 
-**Note: For flatpak version of Steam, by default `/home/$USER` or `$HOME` directory is mapped to `/home/$USER/.var/app/com.valvesoftware.Steam`.
-A dialog box will ask whether to install thcrap to `/home/$USER/.local/share/thcrap`,
-but the real location is `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thcrap`**
-
 #### Manual installation
 
 Download the script, mark it as executable, and put under `/usr/local/bin/` (or somewhere that you find convenient):
@@ -80,8 +76,6 @@ To enable thprac for that game, use the `-p` flag, like this:
 
 The script will download and install thprac to `THPRAC_FOLDER`.
 Default location is `/home/$USER/.local/share/thprac`.
-
-**Note: For flatpak version of Steam, the default location is mapped to `/home/$USER/.var/app/com.valvesoftware.Steam/.local/share/thprac`**
 
 Upon launching thprac will ask whether to apply to the ongoing game, if running game
 in full screen mode you may need to minimize the game to see the dialog box.
