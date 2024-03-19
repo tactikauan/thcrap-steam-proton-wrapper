@@ -86,21 +86,18 @@ if [ "$USE_THPRAC" == 1 ]; then
             exit
         fi
         LD_LIBRARY_PATH=/usr/lib64:/usr/lib curl -L -f "https://github.com/touhouworldcup/thprac/releases/download/$THPRAC_VERSION/thprac.$THPRAC_VERSION.exe" -o "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" | ${ZENITY} --progress --pulsate --auto-close --text="Downloading \"thprac.$THPRAC_VERSION.exe\""
-        if [ $? != 0 ]; then
-            # Only abort if there's no version currently installed
-            if [ ! -f "$THPRAC_FOLDER/thprac.exe" ]; then
-                ${ZENITY} --error --text="Download failed. Aborting"
-                exit
-            fi
-        else
+        if [ $? = 0 ]; then
             # Create a symlink to latest version
             ln -srf "$THPRAC_FOLDER/thprac.$THPRAC_VERSION.exe" "$THPRAC_FOLDER/thprac.exe"
             # Remove old versions, only keep the latest version
             find "$THPRAC_FOLDER" -maxdepth 1 -name "thprac.*.exe" \! -name "thprac.$THPRAC_VERSION.exe" -exec rm {} \;
         fi
-    elif [[ -z "$THPRAC_VERSION" && ! -f "$THPRAC_FOLDER/thprac.exe" ]]; then
-        # no connection and no installed version
-        ${ZENITY} --error --text="Download failed. Aborting"
+    fi
+
+    # Make sure thprac is installed
+    if [ ! -f "$THPRAC_FOLDER/thprac.exe" ]; then
+        # no installed version
+        ${ZENITY} --error --text="thprac installation failed. Aborting"
         exit
     fi
 fi
