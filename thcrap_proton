@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-THCRAP_FOLDER="/home/$USER/.local/share/thcrap"
+[ -z "$XDG_DATA_HOME" ] && XDG_DATA_HOME="$HOME/.local/share"
+THCRAP_FOLDER="$XDG_DATA_HOME/thcrap"
 THCRAP_CONFIG=en.js
 
 ZENITY=$(which zenity)
