@@ -121,8 +121,7 @@ echo "$COMMAND"
 echo "---------------------------------------------------------"
 
 sh -c "$COMMAND" &
-
-if [ "$USE_THPRAC" == 1 ]; then
+if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; then
     # wait 5s and launch thprac so it could auto attach to the game
     sleep 5
     PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
