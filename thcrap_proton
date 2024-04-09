@@ -102,12 +102,12 @@ if [ "$USE_THPRAC" == 1 ]; then
     fi
 fi
 
-TH_REGEX="(th[0-9]+\.exe|東方紅魔郷)"
+TH_REGEX="\((th[0-9]+|東方紅魔郷)"
 
 if [ "$USE_VPATCH" == 1 ]; then
     COMMAND=$(
         echo "$COMMAND" |
-        sed -r "s/$TH_REGEX/vpatch.exe/"
+        sed -r "s/$TH_REGEX\.exe/vpatch.exe/"
     )
 fi
 
