@@ -21,6 +21,31 @@ launch_config() {
     sh -c "$RUN"
 }
 
+run_background() {
+    # Get PID while ensuring only the actual Touhou executable is chosen
+    while [ -z "$TH_PID" ]; do # Loop until a matching process is found
+        TH_PID=$(grep -Er "\(($TH_REGEX|custom\.exe)" /proc/*/stat | sed "s/.*:\([0-9]\+\).*/\\1/")
+        sleep 5
+    done
+
+    if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; then
+        PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
+        RUN_THPRAC="$PROTON_CMD run '$THPRAC_FOLDER/thprac.exe'"
+        echo "-----------------------THPRAC COMMAND--------------------"
+        echo "$RUN_THPRAC"
+        echo "---------------------------------------------------------"
+        sh -c "$RUN_THPRAC" &
+    fi
+
+    # Check if Touhou is still running
+    while ps -p $TH_PID > /dev/null; do
+        sleep 5
+    done
+
+    # Find and kill the thcrap_loader process
+    pkill -f "thcrap_loader.exe"
+}
+
 while getopts "vp c:e:" flag; do
     case "${flag}" in
         v) USE_VPATCH=1;;
@@ -120,27 +145,10 @@ echo "--------------------GENERATED COMMAND--------------------"
 echo "$COMMAND"
 echo "---------------------------------------------------------"
 
-sh -c "$COMMAND" &
+set -m
+run_background &
+BACKGROUND_PID=$!
 
-# Get PID while ensuring only the actual Touhou executable is chosen
-while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(grep -Er "\(($TH_REGEX|custom\.exe)" /proc/*/stat | sed "s/.*:\([0-9]\+\).*/\\1/")
-    sleep 5
-done
+sh -c "$COMMAND"
 
-if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; then
-    PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
-    RUN_THPRAC="$PROTON_CMD run '$THPRAC_FOLDER/thprac.exe'"
-    echo "-----------------------THPRAC COMMAND--------------------"
-    echo "$RUN_THPRAC"
-    echo "---------------------------------------------------------"
-    sh -c "$RUN_THPRAC" &
-fi
-
-# Check if Touhou is still running
-while ps -p $TH_PID > /dev/null; do
-    sleep 5
-done
-
-# Find and kill the thcrap_loader process
-pkill -f "thcrap_loader.exe"
+kill -- -$BACKGROUND_PID
