@@ -121,9 +121,14 @@ echo "$COMMAND"
 echo "---------------------------------------------------------"
 
 sh -c "$COMMAND" &
-if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; then
-    # wait 5s and launch thprac so it could auto attach to the game
+
+# Get PID while ensuring only the actual Touhou executable is chosen
+while [ -z "$TH_PID" ]; do # Loop until a matching process is found
+    TH_PID=$(grep -Er "\(($TH_REGEX|custom\.exe)" /proc/*/stat | sed "s/.*:\([0-9]\+\).*/\\1/")
     sleep 5
+done
+
+if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; then
     PROTON_CMD=$( echo "$COMMAND" | sed -n "s/^.*-- \(.*\) waitforexitandrun.*$/\\1/p" )
     RUN_THPRAC="$PROTON_CMD run '$THPRAC_FOLDER/thprac.exe'"
     echo "-----------------------THPRAC COMMAND--------------------"
@@ -131,12 +136,6 @@ if [[ "$USE_THPRAC" == 1 && -z $(echo "$COMMAND" | grep -E 'custom\.exe$') ]]; t
     echo "---------------------------------------------------------"
     sh -c "$RUN_THPRAC" &
 fi
-
-# Get PID while ensuring only the actual Touhou executable is chosen
-while [ -z "$TH_PID" ]; do # Loop until a matching process is found
-    TH_PID=$(grep -Er "\(($TH_REGEX|custom\.exe)" /proc/*/stat | sed "s/.*:\([0-9]\+\).*/\\1/")
-    sleep 5
-done
 
 # Check if Touhou is still running
 while ps -p $TH_PID > /dev/null; do
